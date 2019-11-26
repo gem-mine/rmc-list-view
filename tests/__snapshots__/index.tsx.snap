@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`basic base. 1`] = `
+<div
+  class="rmc-list-view-scrollView"
+  style="position:relative;overflow:auto;-webkit-overflow-scrolling:touch;"
+>
+  <div
+    class="rmc-list-view-scrollView-Content"
+  >
+    <div />
+  </div>
+</div>
+`;

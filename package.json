@@ -1,0 +1,96 @@
+{
+  "name": "@gem-mine/rmc-list-view",
+  "version": "1.0.0",
+  "description": "list-view ui component for react（mobile web）",
+  "keywords": [
+    "react",
+    "react-component",
+    "react-m-list-view",
+    "list-view"
+  ],
+  "files": [
+    "lib",
+    "es",
+    "assets",
+    "dist"
+  ],
+  "main": "lib/index",
+  "module": "es/index",
+  "license": "MIT",
+  "author": "guoyh <gyh9457@163.com>",
+  "config": {
+    "port": 8000,
+    "entry": {
+      "rmc-list-view": [
+        "./src/index.js",
+        "./assets/index.less"
+      ]
+    }
+  },
+  "scripts": {
+    "watch-tsc": "rc-tools run watch-tsc",
+    "compile": "rc-tools run compile --babel-runtime",
+    "build": "rc-tools run build",
+    "start": "rc-tools run server",
+    "pub": "rc-tools run pub --babel-runtime",
+    "lint": "rc-tools run lint --no-js-lint",
+    "test": "jest",
+    "update-snap": "jest --updateSnapshot",
+    "coverage": "jest --coverage",
+    "coverage:upload": "npm run coverage && cat ./coverage/lcov.info | coveralls"
+  },
+  "jest": {
+    "testMatch": [
+      "**/tests/**/*.ts?(x)",
+      "**/?(*.)(spec|test).ts?(x)",
+      "**/tests/**/*.js?(x)",
+      "**/?(*.)(spec|test).js?(x)"
+    ],
+    "coverageDirectory": "./coverage/",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*"
+    ],
+    "transform": {
+      "\\.tsx?$": "./node_modules/rc-tools/scripts/jestPreprocessor.js",
+      "\\.jsx?$": "./node_modules/rc-tools/scripts/jestPreprocessor.js"
+    }
+  },
+  "dependencies": {
+    "babel-runtime": "6.x",
+    "classnames": "^2.2.0",
+    "raf": "^3.4.1"
+  },
+  "devDependencies": {
+    "@types/classnames": "^2.2.3",
+    "@types/enzyme": "^2.8.6",
+    "@types/enzyme-to-json": "^1.5.0",
+    "@types/jest": "^20.0.7",
+    "@types/raf": "^3.4.0",
+    "@types/react": "^15.0.27",
+    "@types/react-dom": "^15.5.0",
+    "@types/react-sticky": "^6.0.3",
+    "coveralls": "^2.13.1",
+    "enzyme": "^2.9.1",
+    "enzyme-to-json": "^1.5.1",
+    "jest": "^20.0.4",
+    "pre-commit": "1.x",
+    "rc-test": "6.x",
+    "rc-tools": "6.x",
+    "react": "^15.5.x",
+    "react-dom": "^15.5.x",
+    "react-sticky": "^6.0.3",
+    "react-test-renderer": "^15.5.0",
+    "rmc-pull-to-refresh": "^1.0.11",
+    "stylelint-config-standard": "^17.0.0"
+  },
+  "typings": "./lib/index.d.ts",
+  "pre-commit": [
+    "lint",
+    "test"
+  ]
+}
