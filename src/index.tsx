@@ -6,7 +6,7 @@ export interface PropsType {
   className?: string;
   style?: React.CSSProperties;
   prefixCls?: string;
-  dataSource: object[] | string[];
+  dataSource: any[];
   renderItem: (arg: object | string, index?: number) => React.ReactNode;
   renderHeader?: () => React.ReactNode;
   renderFooter?: () => React.ReactNode;
@@ -27,6 +27,8 @@ export interface PropsType {
 
 export interface StateTypes {
   curRenderedCount: number; // 当前需要渲染的数量
+  dataSource: any[];
+  sections?: string[];
 }
 
 export interface ScrollProps {
@@ -39,6 +41,16 @@ export interface SectionData {
   category: string;
   data: any[];
 }
+
+const getTotalCount = (state: { sections?: string[], dataSource: any[] }) => {
+  const { sections, dataSource } = state;
+  if (sections) {
+    return (dataSource as SectionData[]).reduce((total: number, item: SectionData) => {
+      return total + item.data.length;
+    }, 0);
+  }
+  return dataSource.length;
+};
 
 export default class ListView extends React.Component<PropsType, StateTypes> {
   static defaultProps = {
@@ -55,40 +67,40 @@ export default class ListView extends React.Component<PropsType, StateTypes> {
   private scrollProperties: ScrollProps;
   private sentEndForContentLength: number;
 
+  static getDerivedStateFromProps(nextProps: PropsType, state: StateTypes) {
+    const { dataSource, sections, initialListSize, pageSize } = nextProps;
+    if (dataSource !== state.dataSource ||
+      sections !== state.sections ||
+      initialListSize !== state.curRenderedCount
+    ) {
+      return {
+        curRenderedCount: Math.min(
+          state.curRenderedCount + pageSize!,
+          getTotalCount({ sections, dataSource })
+        ),
+        sections,
+        dataSource,
+      };
+    }
+
+    return null;
+  }
+
   constructor(props: PropsType) {
     super(props);
 
     this.state = {
-      curRenderedCount: props.initialListSize!
+      curRenderedCount: props.initialListSize!,
+      dataSource: props.dataSource,
+      sections: props.sections,
     };
-  }
 
-  componentWillMount() {
     // 滚动数据 用于计算是否渲染
     this.scrollProperties = {
       visibleLength: 0,
       contentLength: 0,
       offset: 0,
     };
-  }
-
-  componentWillReceiveProps(nextProps: PropsType) {
-    const { dataSource, initialListSize } = nextProps;
-    if (dataSource !== this.props.dataSource || initialListSize !== this.props.initialListSize) {
-      this.setState((state) => {
-        return {
-          curRenderedCount: Math.min(
-            Math.max(
-              state.curRenderedCount,
-              nextProps.initialListSize!
-            ),
-            this.getTotalCount(nextProps)
-          )
-        };
-      }, () => {
-        this.renderMore();
-      });
-    }
   }
 
   componentDidMount() {
@@ -107,22 +119,13 @@ export default class ListView extends React.Component<PropsType, StateTypes> {
     }
   }
 
-  getTotalCount = (props: PropsType) => {
-    const { sections, dataSource } = props;
-    if (sections) {
-      return (dataSource as SectionData[]).reduce((total: number, item: SectionData) => {
-        return total + item.data.length;
-      }, 0);
-    }
-    return dataSource.length;
-  }
-
   renderBody = () => {
-    const { renderBodyComponent, dataSource, renderItem, sections, renderSection, renderSectionWrapper } = this.props;
+    const { dataSource, sections } = this.state;
+    const { renderBodyComponent, renderItem, renderSection, renderSectionWrapper } = this.props;
     const Body = renderBodyComponent!();
     const bodyComponents = [];
     let rowCount;
-    const totalCount = this.getTotalCount(this.props);
+    const totalCount = getTotalCount({ sections, dataSource });
     // 区分是否带 sections
     if (sections) {
       rowCount = Math.min(totalCount, this.state.curRenderedCount);
@@ -171,9 +174,9 @@ export default class ListView extends React.Component<PropsType, StateTypes> {
 
   callOnEndReached = () => {
     const { onEndReached, onEndReachedThreshold } = this.props;
-    const { curRenderedCount } = this.state;
+    const { curRenderedCount, sections, dataSource } = this.state;
     const distanceFromEnd = this.getDistanceFromEnd();
-    if (curRenderedCount === this.getTotalCount(this.props)
+    if (curRenderedCount === getTotalCount({ sections, dataSource })
       && distanceFromEnd < onEndReachedThreshold!
       && this.sentEndForContentLength !== this.scrollProperties.contentLength) {
       this.sentEndForContentLength = this.scrollProperties.contentLength;
@@ -185,14 +188,14 @@ export default class ListView extends React.Component<PropsType, StateTypes> {
 
   renderMore = () => {
     const { scrollRenderAheadDistance, pageSize } = this.props;
-    const { curRenderedCount } = this.state;
-    if (curRenderedCount === this.getTotalCount(this.props)) {
+    const { curRenderedCount, sections, dataSource } = this.state;
+    if (curRenderedCount === getTotalCount({ sections, dataSource })) {
       return;
     }
     const distanceFromEnd = this.getDistanceFromEnd();
     if (distanceFromEnd < scrollRenderAheadDistance!) {
       this.setState({
-        curRenderedCount: Math.min(curRenderedCount + pageSize!, this.getTotalCount(this.props))
+        curRenderedCount: Math.min(curRenderedCount + pageSize!, getTotalCount({ sections, dataSource }))
       });
     }
   }
