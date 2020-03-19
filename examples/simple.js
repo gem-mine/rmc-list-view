@@ -1,6 +1,6 @@
 /* eslint no-console:0 */
-import 'rmc-list-view/assets/index.less';
-import ListView from 'rmc-list-view';
+import '@gem-mine/rmc-list-view/assets/index.less';
+import ListView from '@gem-mine/rmc-list-view';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
