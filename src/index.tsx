@@ -131,7 +131,7 @@ export default class ListView extends React.Component<PropsType, StateTypes> {
       rowCount = Math.min(totalCount, this.state.curRenderedCount);
       let curRows = 0;
       for (let i = 0; i < sections.length; i++) {
-        if (curRows === rowCount) {
+        if (curRows > rowCount) {
           break;
         }
         const data = (dataSource as SectionData[]).filter((item: { category: string, data: string[]}) => {
