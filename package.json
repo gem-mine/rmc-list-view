@@ -1,6 +1,6 @@
 {
   "name": "@gem-mine/rmc-list-view",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "list-view ui component for react（mobile web）",
   "keywords": [
     "react",
