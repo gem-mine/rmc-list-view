@@ -47,7 +47,7 @@ const getTotalCount = (state: { sections?: string[], dataSource: any[] }) => {
   if (sections) {
     return (dataSource as SectionData[]).reduce((total: number, item: SectionData) => {
       return total + item.data.length;
-    }, 0);
+    }, sections.length);
   }
   return dataSource.length;
 };
